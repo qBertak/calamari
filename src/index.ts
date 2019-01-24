@@ -90,7 +90,7 @@ stylesApplyer: StylesApplyerFunc,
     }: BemNodeProps): any => {
         const {props, applyedModifiers} = separateModifiersFromProps(rest, mods);
 
-        React.createElement(Component, {
+        return React.createElement(Component, {
             ...default_props,
             ...props,
             ...stylesApplyer({
