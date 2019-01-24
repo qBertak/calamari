@@ -1,7 +1,6 @@
 import * as React from 'react';
 
-// @ts-ignore
-import KebabCase from 'kebab-case';
+import KebabCase from './kebab';
 
 type ValidComponent = React.ComponentType<any>;
 
@@ -34,11 +33,12 @@ export type ApplyedMod = {
 
 export type ApplyedMods = Array<ApplyedMod>;
 
-export interface classNameData {
+export interface ClassNameData {
     className: string,
-    applyedModifiers?: ApplyedMods,
+    applyedModifiers: ApplyedMods,
     mixin?: string,
     propsClassname?: string,
+    style?: any,
 }
 
 export interface BemNodeProps {
@@ -46,14 +46,15 @@ export interface BemNodeProps {
     className?: string,
     mixin?: string,
     children?: Element,
+    style?: any,
 }
 
-export type createNodeFunc = (nodeSchema: NodeSchema) => any;
+export type CreateNodeFunc = (nodeSchema: NodeSchema) => any;
 
-export type stylesApplyerFunc = (classNameData: classNameData) => object;
+export type StylesApplyerFunc = (classNameData: ClassNameData) => object;
 
 export default function createBlock(
-    blockSchema: NodeSchema, elementsSchemas: Elements, createNode: createNodeFunc
+    blockSchema: NodeSchema, elementsSchemas: Elements, createNode: CreateNodeFunc
 ): Node {
     const BemBlock = createNode(blockSchema);
 
@@ -77,13 +78,14 @@ export function createNode({
     mods,
     ...default_props
 }: NodeDescription,
-stylesApplyer: stylesApplyerFunc,
+stylesApplyer: StylesApplyerFunc,
 ): any {
     const BemNode = ({
         component: Component = component,
         className: propsClassname,
         mixin,
         children,
+        style,
         ...rest
     }: BemNodeProps): any => {
         const {props, applyedModifiers} = separateModifiersFromProps(rest, mods);
@@ -96,6 +98,7 @@ stylesApplyer: stylesApplyerFunc,
                 applyedModifiers,
                 mixin,
                 propsClassname,
+                style,
             })
         }, children);
     }
@@ -108,7 +111,7 @@ export function createClassName({
     applyedModifiers,
     mixin,
     propsClassname,
-}: classNameData) {
+}: ClassNameData) {
     const modifiers = createModifiers(applyedModifiers);
     const result_mixin = createMixin(mixin, propsClassname);
 
@@ -148,13 +151,13 @@ export function separateModifiersFromProps(props: any, mods: Mods = []): {applye
         const applyedMod = parseMod(mod, props);
 
         return {
-            applyedModifiers: applyedModifiers.concat(),
-            props: {...props, [applyedMod.name]: undefined},
+            applyedModifiers: applyedMod.value ? applyedModifiers.concat(applyedMod) : applyedModifiers,
+            props: props[applyedMod.name] ? {...props, [applyedMod.name]: undefined} : props,
         };
     }, {props, applyedModifiers: []});
 }
 
-function parseMod(mod: Mod, props: any) {
+export function parseMod(mod: Mod, props: any) {
     return Array.isArray(mod)
         ?
         {name: mod[0], value: props[mod[0]] || mod[1]}

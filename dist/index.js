@@ -21,15 +21,14 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
-// @ts-ignore
-var kebab_case_1 = require("kebab-case");
+var kebab_1 = require("./kebab");
 ;
 function createBlock(blockSchema, elementsSchemas, createNode) {
     var BemBlock = createNode(blockSchema);
     if (elementsSchemas) {
         for (var elementSchema in elementsSchemas) {
             if (elementsSchemas.hasOwnProperty(elementSchema) && blockSchema.class) {
-                BemBlock[elementSchema] = createNode(__assign({}, elementsSchemas[elementSchema], { class: blockSchema.class + "__" + kebab_case_1.default(elementSchema).slice(1) }));
+                BemBlock[elementSchema] = createNode(__assign({}, elementsSchemas[elementSchema], { class: blockSchema.class + "__" + kebab_1.default(elementSchema).slice(1) }));
             }
         }
     }
@@ -39,13 +38,14 @@ exports.default = createBlock;
 function createNode(_a, stylesApplyer) {
     var className = _a.class, component = _a.component, mods = _a.mods, default_props = __rest(_a, ["class", "component", "mods"]);
     var BemNode = function (_a) {
-        var _b = _a.component, Component = _b === void 0 ? component : _b, propsClassname = _a.className, mixin = _a.mixin, children = _a.children, rest = __rest(_a, ["component", "className", "mixin", "children"]);
+        var _b = _a.component, Component = _b === void 0 ? component : _b, propsClassname = _a.className, mixin = _a.mixin, children = _a.children, style = _a.style, rest = __rest(_a, ["component", "className", "mixin", "children", "style"]);
         var _c = separateModifiersFromProps(rest, mods), props = _c.props, applyedModifiers = _c.applyedModifiers;
         React.createElement(Component, __assign({}, default_props, props, stylesApplyer({
             className: className,
             applyedModifiers: applyedModifiers,
             mixin: mixin,
             propsClassname: propsClassname,
+            style: style,
         })), children);
     };
     return BemNode;
@@ -88,8 +88,8 @@ function separateModifiersFromProps(props, mods) {
         var _b;
         var applyedMod = parseMod(mod, props);
         return {
-            applyedModifiers: applyedModifiers.concat(),
-            props: __assign({}, props, (_b = {}, _b[applyedMod.name] = undefined, _b)),
+            applyedModifiers: applyedMod.value ? applyedModifiers.concat(applyedMod) : applyedModifiers,
+            props: props[applyedMod.name] ? __assign({}, props, (_b = {}, _b[applyedMod.name] = undefined, _b)) : props,
         };
     }, { props: props, applyedModifiers: [] });
 }
@@ -101,3 +101,4 @@ function parseMod(mod, props) {
         :
             { name: mod, value: props[mod] };
 }
+exports.parseMod = parseMod;
