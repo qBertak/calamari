@@ -1,0 +1,25 @@
+{
+  "name": "calamari",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "kebab-case": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.7.20",
+    "@types/react-dom": "^16.0.11",
+    "jest": "23.6.0",
+    "typescript": "^3.2.4",
+    "react": "*"
+  },
+  "peerDependencies": {
+    "react": "*"
+  },
+  "author": "Vadim Mironov",
+  "license": "MIT"
+}
