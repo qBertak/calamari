@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 type ValidComponent = React.ComponentType<any>;
 
 export interface NodeSchema {
